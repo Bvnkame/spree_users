@@ -1,3 +1,4 @@
 Spree::Core::Engine.routes.draw do
-  # Add your extension routes here
+  get "/api/ingredients" => "home#ingredients"
+  get "/tam" => "sessions#tam"
 end

@@ -17,5 +17,10 @@ module Spree
 				end
 			end
 		end
+
+		def logout
+			sign_out(current_user)
+			p current_user
+		end
 	end
 end

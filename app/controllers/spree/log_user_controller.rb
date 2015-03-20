@@ -1,5 +1,6 @@
 module Spree
 	class LogUserController < ApplicationController
+
 		def login
 			@user = Spree.user_class.find_for_database_authentication(:email => params[:email])
 			if  @user &&  @user.valid_password?(params[:password])

@@ -5,11 +5,19 @@ module Spree
 			if  @user &&  @user.valid_password?(params[:password])
 
 				sign_in(@user)
+				p spree_current_user
 				if !@user.spree_api_key.present?
 					@user.generate_spree_api_key!
 				end
 				respond_to do |format|
-					format.json { render :json => { "X-Spree-Token " =>  @user.spree_api_key }, :status => 200}
+					format.json { render :json => { 
+						"email" => spree_current_user.email,
+						"first_name" => spree_current_user.first_name,
+						"last name" => spree_current_user.last_name,
+						"money_accout" => "1000",
+						"currency" => "USD",
+						"X-Spree-Token " =>  @user.spree_api_key }, :status => 200
+					}
 				end
 			else
 				respond_to do |format|
@@ -19,8 +27,12 @@ module Spree
 		end
 
 		def logout
-			sign_out(current_user)
-			p current_user
+			p spree_current_user
+			sign_out(spree_current_user)  if spree_current_user
+			p spree_current_user
+			respond_to do |format|
+				format.json { render :json => { "message " =>  "Logout Successful" }, :status => 200}
+			end
 		end
 	end
 end

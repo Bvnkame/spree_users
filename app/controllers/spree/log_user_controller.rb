@@ -9,16 +9,7 @@ module Spree
 				if !@user.spree_api_key.present?
 					@user.generate_spree_api_key!
 				end
-				respond_to do |format|
-					format.json { render :json => { 
-						"email" => spree_current_user.email,
-						"first_name" => spree_current_user.first_name,
-						"last name" => spree_current_user.last_name,
-						"money_accout" => "1000",
-						"currency" => "USD",
-						"X-Spree-Token " =>  @user.spree_api_key }, :status => 200
-					}
-				end
+					render "spree/api/users/show"
 			else
 				respond_to do |format|
 					format.json { render :json => { "error " =>  "Email or Password is wrong" }, :status => 404}

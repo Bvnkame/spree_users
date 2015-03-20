@@ -1,5 +1,5 @@
 Spree::Api::UsersController.class_eval do
-	before_action :authenticate_user!, :except => [:create]
+	before_action :authenticate_user, :except => [:create]
 
 	def create
 		authorize! :create, Spree.user_class

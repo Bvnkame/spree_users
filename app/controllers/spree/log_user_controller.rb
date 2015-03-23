@@ -1,15 +1,12 @@
 module Spree
 	class LogUserController < Spree::Api::BaseController
 		before_action :authenticate_user, :except => [:login]
-		skip_before_action :verify_authenticity_token
 
 		def login
 			@user = Spree.user_class.find_for_database_authentication(:email => params[:email])
 			if  @user &&  @user.valid_password?(params[:password])
 				sign_in(@user)
-				if !@user.spree_api_key.present?
-					@user.generate_spree_api_key!
-				end
+				@user.generate_spree_api_key!
 				render "spree/api/users/show"
 			else
 				respond_to do |format|

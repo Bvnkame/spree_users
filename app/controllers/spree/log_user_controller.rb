@@ -1,6 +1,7 @@
 module Spree
 	class LogUserController < Spree::Api::BaseController
 		before_action :authenticate_user, :except => [:login]
+		skip_before_action :verify_authenticity_token
 
 		def login
 			@user = Spree.user_class.find_for_database_authentication(:email => params[:email])

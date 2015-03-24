@@ -1,20 +1,21 @@
 module Spree
 	class LogUserController < Spree::Api::BaseController
-		before_action :authenticate_user, :except => [:login, :logout]
-		# skip_before_action :verify_authenticity_token
+		before_action :authenticate_user, :except => [:login]
 
 		def login
 			@user = Spree.user_class.find_for_database_authentication(:email => params[:email])
-			if  @user &&  @user.valid_password?(params[:password])
-				sign_in(@user)
-				if !@user.spree_api_key.present?
+			if  @user 
+				if @user.valid_password?(params[:password])
+					sign_in(@user)
 					@user.generate_spree_api_key!
+					render "spree/api/users/show"
+				else		
+					@status = [ { "message" => "The password you entered is incorrect. Please try again!"}]
+					render "spree/api/logger/log"
 				end
-				render "spree/api/users/show"
 			else
-				respond_to do |format|
-					format.json { render :json => { "error " =>  "Email or Password is wrong" }, :status => 404}
-				end
+				@status = [ { "message" => "The email you entered is not on any account."}]
+				render "spree/api/logger/log"
 			end
 		end
 
@@ -26,9 +27,11 @@ module Spree
 				# respond_to do |format|
 				# 	format.json { render :json => { "message " =>  "Logout Successful" }}
 				# end
-				render "spree/api/logger/successful"
+				@status = [ { "message" => "Logout successful"}]
+				render "spree/api/logger/log"
 			else
-				render "spree/api/logger/fail"
+				@status = [ { "message" => "API-Key isn't valuable"}]
+				render "spree/api/logger/log"
 			end
 		end
 	end

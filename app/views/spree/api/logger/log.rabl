@@ -1,2 +1,2 @@
 object @status
-node(:message) { |p| p['message'] }
+node(:messages) { |p| p['messages'] }

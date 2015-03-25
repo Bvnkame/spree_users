@@ -4,18 +4,13 @@ module Spree
 
 		def login
 			@user = Spree.user_class.find_for_database_authentication(:email => params[:email])
-			if  @user 
-				if @user.valid_password?(params[:password])
-					sign_in(@user)
-					@user.generate_spree_api_key!
-					render "spree/api/users/show"
-				else		
-					@status = [ { "message" => "The password you entered is incorrect. Please try again!"}]
-					render "spree/api/logger/log"
-				end
-			else
-				@status = [ { "message" => "The email you entered is not on any account."}]
-				render "spree/api/logger/log"
+			if  @user && @user.valid_password?(params[:password])
+				sign_in(@user)
+				@user.generate_spree_api_key!
+				render "spree/api/users/show", status: 200
+			else		
+				@status = [{ "messages" => "Your Email or Password is wrong"}]
+				render "spree/api/logger/log", status: 404
 			end
 		end
 
@@ -27,11 +22,11 @@ module Spree
 				# respond_to do |format|
 				# 	format.json { render :json => { "message " =>  "Logout Successful" }}
 				# end
-				@status = [ { "message" => "Logout successful"}]
-				render "spree/api/logger/log"
+				@status = [ { "messages" => "Logout successful"}]
+				render "spree/api/logger/log", status: 200
 			else
-				@status = [ { "message" => "API-Key isn't valuable"}]
-				render "spree/api/logger/log"
+				@status = [ { "messages" => "API-Key isn't valuable"}]
+				render "spree/api/logger/log", status: 404
 			end
 		end
 	end

@@ -2,6 +2,7 @@ Spree::Api::UsersController.class_eval do
 	before_action :authenticate_user, :except => [:create]
 
 	def create
+		params[:user][:signup_type] = params[:user][:signup_type].downcase
 		@user = Spree.user_class.new(user_params)
 		if @user.save
 			sign_in(@user)

@@ -1,4 +1,5 @@
 Spree::Api::UsersController.class_eval do
+	include Spree::OrdersImporter
 	before_action :authenticate_user, :except => [:create]
 
 	def create

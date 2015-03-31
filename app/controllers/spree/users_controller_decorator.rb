@@ -5,8 +5,12 @@ Spree::Api::UsersController.class_eval do
 		@user = Spree.user_class.new(user_params)
 		if @user.save
 			sign_in(@user)
+			@order = find_cart_order_login(@user)
+			unless @order
+				@order = create_order(@user)
+			end
 			@user.generate_spree_api_key!
-			respond_with(@user, :status => 201, :default_template => :show)
+			render "spree/api/users/show", status: 200
 		else
 			invalid_resource!(@user)
 		end

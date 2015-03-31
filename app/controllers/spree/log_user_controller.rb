@@ -1,12 +1,20 @@
 module Spree
 	class LogUserController < Spree::Api::BaseController
+		include Spree::OrdersImporter
 		before_action :authenticate_user, :except => [:login]
 
 		def login
 			@user = Spree.user_class.find_for_database_authentication(:email => params[:email])
 			if  @user && @user.valid_password?(params[:password])
 				sign_in(@user)
+				
+				@order = find_cart_order_login(@user)
+				unless @order
+					@order = create_order(@user)
+				end
+
 				@user.generate_spree_api_key!
+
 				render "spree/api/users/show", status: 200
 			else		
 				@status = [{ "messages" => "Your Email or Password is wrong"}]

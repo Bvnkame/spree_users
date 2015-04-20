@@ -4,6 +4,10 @@ Spree::Api::UsersController.class_eval do
 
 	def create
 		p user_params
+		@tam = Spree::User.new(user_params)
+		@tam.save
+		p "dfsdkf"
+		p @tam
 		@user = Spree.user_class.new(user_params)
 		p @user
 		if @user.save
@@ -41,11 +45,20 @@ Spree::Api::UsersController.class_eval do
 	end
 
 	def change_password
-		p password_params
-		p password_params[:old]
-		p password_params[:new]
 		@user = current_api_user
 		authorize! :update, @user
+
+		if @user.valid_password?(password_params[:old])
+			@user.password = password_params[:new]
+			@user.save
+			p @user.password
+			@status = [ { "messages" => "Update Password Successful"}]
+			render "spree/api/logger/log", status: 200	
+		else
+			@status = [ { "messages" => "Password Is Not Right"}]
+			render "spree/api/logger/log", status: 404	
+		end
+		
 	end
 
 	def user_update_params
@@ -53,7 +66,7 @@ Spree::Api::UsersController.class_eval do
 	end
 
 	def password_params
-	 	params.require(:password).permit(:old, :new)
-	 end 
+		params.require(:password).permit(:old, :new)
+	end 
 
 end

@@ -32,8 +32,17 @@ Spree::Api::UsersController.class_eval do
 		end
 	end
 
-	def user_update_params
-		params.require(:user).permit(:first_name, :last_name, :avatar_url, :password, :birthday)
+	def change_password
+		@user = current_api_key
+		authorize! :update, @user
 	end
+
+	def user_update_params
+		params.require(:user).permit(:first_name, :last_name, :birthday)
+	end
+
+	def password_params
+	 	params.require(:password).permit(:old, :new)
+	 end 
 
 end

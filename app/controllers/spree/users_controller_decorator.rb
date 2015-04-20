@@ -32,6 +32,11 @@ Spree::Api::UsersController.class_eval do
 		end
 	end
 
+	def user_account
+		@user = current_api_user
+		render "spree/api/users/user_account", status: 200
+	end
+
 	def change_password
 		@user = current_api_key
 		authorize! :update, @user

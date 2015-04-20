@@ -3,8 +3,11 @@ Spree::Api::UsersController.class_eval do
 	before_action :authenticate_user, :except => [:create]
 
 	def create
+		p user_params
 		@user = Spree.user_class.new(user_params)
+		p @user
 		if @user.save
+			p @user
 			sign_in(@user)
 			@order = find_cart_order_login(@user)
 			unless @order

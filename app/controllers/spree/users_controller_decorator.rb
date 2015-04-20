@@ -38,7 +38,10 @@ Spree::Api::UsersController.class_eval do
 	end
 
 	def change_password
-		@user = current_api_key
+		p password_params
+		p password_params[:old]
+		p password_params[:new]
+		@user = current_api_user
 		authorize! :update, @user
 	end
 

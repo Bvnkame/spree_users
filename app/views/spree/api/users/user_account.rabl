@@ -11,4 +11,3 @@ node(:currency) { |p|
 		else
 			"VND"
 		end }
-node(:cart_number) { @order.number }

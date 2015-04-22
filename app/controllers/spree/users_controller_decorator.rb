@@ -1,6 +1,6 @@
 Spree::Api::UsersController.class_eval do
 	include Spree::OrdersImporter
-	before_action :authenticate_user, :except => [:create]
+	before_action :authenticate_user, :except => [:create, :reset_password]
 
 	def create
 		p user_params
@@ -58,8 +58,19 @@ Spree::Api::UsersController.class_eval do
 			@status = [ { "messages" => "Password Is Not Right"}]
 			render "spree/api/logger/log", status: 404	
 		end
-		
 	end
+
+
+	def reset_password
+		@user = Spree::User.find_by!(email: params[:email])
+		raw, enc = Devise.token_generator.generate(Spree::User, :reset_password_token)
+		@user.reset_password_token = enc
+		@user.reset_password_sent_at = Time.now.utc
+		@user.save
+		Mailer::UserMailer.reset_password_mail(@user).deliver
+		render :nothing => true, status: 200	
+	end
+
 
 	def user_update_params
 		params.require(:user).permit(:first_name, :last_name, :birthday)

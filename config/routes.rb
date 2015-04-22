@@ -5,4 +5,5 @@ Spree::Core::Engine.routes.draw do
 
 	get "/api/user_account" => "api/users#user_account"
  	post "/api/change_password" => "api/users#change_password"
+ 	get "/api/reset_password" => "api/users#reset_password"
 end

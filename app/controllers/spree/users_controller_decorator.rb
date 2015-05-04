@@ -5,15 +5,19 @@ Spree::Api::UsersController.class_eval do
 	def create
 		@user = Spree.user_class.new(user_params)
 		p @user
-		if @user.save
+		if @user.save!
 			p "ok"
 			p @user
+			p "user"
 			sign_in(@user)
 			@order = find_cart_order_login(@user)
 			p "order"
 			p @order
 			unless @order
-				@order = create_order(@user)
+				@order = Spree::Order.new_order(user)
+				p "order list"
+				p @order
+				p "order fisrs"
 			end
 			@user.generate_spree_api_key!
 			render "spree/api/users/show", status: 200

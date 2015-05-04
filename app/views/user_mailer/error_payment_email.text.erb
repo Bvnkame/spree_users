@@ -1,0 +1,17 @@
+Welcome to FOOD SERVICE STORE, <% @user.first_name %>
+===============================================
+
+We need your help resolving an issue with your payment.
+You did transaction on <% param[:payment_date] %>
+
+<% if error == "wrong account" %>
+		You must to pay <%= price %> instead of <%= params[:mc_gross] %>
+
+<% else error == "wrong email" %>
+		You did transaction with wrong email.
+		Email: <%= params[:receiver_email] %> is not our business account
+		
+<% end %>
+
+
+Thanks for joining and have a great day!

@@ -9,5 +9,12 @@ module Mailer
 				template_path: 'user_mailer',
 				template_name: 'reset_password_email')
 		end
+
+		def error_payment_mail(user, error, price, params)
+			@user = user
+			mail(to: user.email, subject: 'Error Payment Notification',
+				template_path: 'user_mailer',
+				template_name: 'error_payment_email')
+		end
 	end
 end

@@ -1,16 +1,11 @@
 Spree::Api::UsersController.class_eval do
 	include Spree::OrdersImporter
-	before_action :authenticate_user, :except => [:create, :reset_password]
+	before_action :authenticate_user, :except => [:create, :reset_password, :reset_new_password]
 
 	def create
-		p user_params
-		@tam = Spree::User.new(user_params)
-		@tam.save
-		p "dfsdkf"
-		p @tam
 		@user = Spree.user_class.new(user_params)
-		p @user
 		if @user.save
+			p "ok"
 			p @user
 			sign_in(@user)
 			@order = find_cart_order_login(@user)
@@ -61,7 +56,7 @@ Spree::Api::UsersController.class_eval do
 	end
 
 
-	def reset_password
+	def reset_password_mail
 		@user = Spree::User.find_by!(email: params[:email])
 		raw, enc = Devise.token_generator.generate(Spree::User, :reset_password_token)
 		@user.reset_password_token = enc
@@ -69,6 +64,15 @@ Spree::Api::UsersController.class_eval do
 		@user.save
 		Mailer::UserMailer.reset_password_mail(@user).deliver
 		render :nothing => true, status: 200	
+	end
+
+	def reset_new_password
+		@user = Spree::User.find_by!(id: reset_password_params[:id], reset_password_token: reset_password_params[:token])
+		@user.password = reset_password_params[:new_password]
+		@user.reset_password_token = nil
+		@user.save
+		@status = [ { "messages" => "Reset Password Successful"}]
+		render "spree/api/logger/log", status: 200	
 	end
 
 
@@ -79,5 +83,9 @@ Spree::Api::UsersController.class_eval do
 	def password_params
 		params.require(:password).permit(:old, :new)
 	end 
+	def reset_password_params
+		params.require(:password).permit(:id, :token, :new_password)
+	end
+
 
 end

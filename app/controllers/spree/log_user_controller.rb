@@ -10,7 +10,7 @@ module Spree
 				
 				@order = find_cart_order_login(@user)
 				unless @order
-					@order = create_order(@user)
+					@order = Spree::Order.new_order(user)
 				end
 
 				@user.generate_spree_api_key!
